@@ -7,7 +7,7 @@ import Dashboard from "./components/Dashboard";
 const App = () => (
   <Router>
     <Switch>
-      <Route exact path="/" render={() => <div>Home</div>} />
+      <Route exact path="/" render={() => <div>Home hai</div>} />
       <Route exact path="/about" render={() => <div>About</div>} />
       <Route exact component={Dashboard} path="/dashboard" />
     </Switch>

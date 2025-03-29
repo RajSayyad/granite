@@ -2,6 +2,7 @@ import { mergeDeepRight } from "ramda";
 import { alias } from "./config/build/config";
 import { define, entryPoints, extensions } from "./config/build/constants";
 import svgr from "vite-plugin-svgr";
+import react from "@vitejs/plugin-react";
 const postCssConfig = require("./postcss.config");
 
 const port = process.env.DEVSERVER_PORT || 8000;
@@ -25,6 +26,7 @@ const baseConfig = {
       svgrOptions: { exportType: "default" },
       include: "**/*.svg",
     }),
+    react(),
   ],
 };
 
