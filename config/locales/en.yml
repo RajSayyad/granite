@@ -29,3 +29,4 @@
 
 en:
   hello: "Hello world"
+  generic_error: "Something went wrong. Please try again later."

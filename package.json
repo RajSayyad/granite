@@ -20,7 +20,9 @@
     "husky": "^8.0.0",
     "lint-staged": "12.3.7",
     "prettier": "^2.6.1",
-    "prettier-plugin-tailwindcss": "^0.1.8"
+    "prettier-plugin-tailwindcss": "^0.1.8",
+    "vite": "^6.2.3",
+    "vite-plugin-ruby": "^5.1.1"
   },
   "scripts": {
     "build": "node esbuild.config.js",
