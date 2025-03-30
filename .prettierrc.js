@@ -13,4 +13,10 @@ module.exports = {
   bracketSameLine: false,
   proseWrap: "always",
   endOfLine: "lf",
+  overrides: [
+    {
+      files: "app/javascript/stylesheets/*.scss",
+      options: { prettier: false },
+    },
+  ],
 };
