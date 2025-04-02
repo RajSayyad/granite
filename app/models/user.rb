@@ -7,6 +7,7 @@ class User < ApplicationRecord
   MAX_EMAIL_LENGTH = 255
 
   has_many :assigned_tasks, foreign_key: :assigned_user_id, class_name: "Task"
+  has_secure_token :authentication_token
   has_secure_password
 
   validates :name, presence: true, length: { maximum: MAX_NAME_LENGTH }
