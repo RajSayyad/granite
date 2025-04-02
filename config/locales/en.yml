@@ -30,4 +30,5 @@
 en:
   hello: "Hello world"
   generic_error: "Something went wrong. Please try again later."
-  successfully_updated: "Task was successfully updated!"
+  successfully_created: "%{entity} was successfully created!"
+  successfully_updated: "%{entity} was successfully updated!"
