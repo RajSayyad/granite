@@ -4,6 +4,9 @@ require "fileutils"
 # path to your application root.
 APP_ROOT = File.expand_path("..", __dir__)
 
+puts "\n== Preparing database =="
+system! "bin/rails db:prepare"
+
 def system!(*args)
   system(*args, exception: true)
 end
@@ -17,6 +20,8 @@ FileUtils.chdir APP_ROOT do
   system! "gem install bundler --conservative"
   system("bundle check") || system!("bundle install")
 
+  puts "\n== Executing yarn =="
+  system!("bin/yarn")
   # Install JavaScript dependencies
   system("yarn check --check-files") || system!("yarn install")
 
