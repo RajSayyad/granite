@@ -29,20 +29,17 @@ class Task < ApplicationRecord
     end
 
     def set_slug
-      title_slug = title.parameterize
-      latest_task_slug = Task.where(
-        "slug LIKE ? or slug LIKE ?",
-        "#{title_slug}",
-        "#{title_slug}-%"
-      ).order("LENGTH(slug) DESC", slug: :desc).first&.slug
-      slug_count = 0
-      if latest_task_slug.present?
-        slug_count = latest_task_slug.split("-").last.to_i
-        only_one_slug_exists = slug_count == 0
-        slug_count = 1 if only_one_slug_exists
+      base_slug = title.parameterize
+      existing_slugs = Task.where("slug LIKE ?", "#{base_slug}-%").pluck(:slug)
+
+      # If exact slug already exists, apply incrementing logic
+      if Task.exists?(slug: base_slug)
+        slug_numbers = existing_slugs.map { |slug| slug[/\d+$/]&.to_i }.compact
+        next_slug_number = slug_numbers.empty? ? 2 : slug_numbers.max + 1
+        self.slug = "#{base_slug}-#{next_slug_number}"
+      else
+        self.slug = base_slug
       end
-      slug_candidate = slug_count.positive? ? "#{title_slug}-#{slug_count + 1}" : title_slug
-      self.slug = slug_candidate
     end
 
     def slug_not_changed

@@ -38,3 +38,6 @@ en:
   successfully_created: "%{entity} was successfully created!"
   successfully_updated: "%{entity} was successfully updated!"
   successfully_deleted: "%{entity} was successfully deleted!"
+  task:
+    slug:
+      immutable: "Slug has already been taken and Slug is immutable!"

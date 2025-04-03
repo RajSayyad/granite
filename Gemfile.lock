@@ -163,6 +163,12 @@ GEM
     marcel (1.0.4)
     mini_mime (1.1.5)
     minitest (5.25.5)
+    minitest-bisect (1.7.0)
+      minitest-server (~> 1.0)
+      path_expander (~> 1.1)
+    minitest-server (1.0.8)
+      drb (~> 2.0)
+      minitest (~> 5.16)
     msgpack (1.8.0)
     mutex_m (0.3.0)
     net-imap (0.5.6)
@@ -195,6 +201,7 @@ GEM
     parser (3.3.7.3)
       ast (~> 2.4.1)
       racc
+    path_expander (1.1.3)
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
@@ -360,6 +367,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   jsbundling-rails
+  minitest-bisect
   puma (>= 5.0)
   pundit
   rails (~> 7.1.3, >= 7.1.3.4)
