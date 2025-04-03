@@ -9,12 +9,21 @@ const create = payload =>
     task: payload,
   });
 
-const update = ({ slug, payload }) =>
-  axios.put(`/tasks/${slug}`, {
+// previous code
+
+const update = ({ slug, payload, quiet = false }) => {
+  const path = quiet ? `/tasks/${slug}?quiet` : `/tasks/${slug}`;
+
+  return axios.put(path, {
     task: payload,
   });
+};
 
-const destroy = slug => axios.delete(`/tasks/${slug}`);
+const destroy = ({ slug, quiet }) => {
+  const path = quiet ? `/tasks/${slug}?quiet` : `/tasks/${slug}`;
+
+  return axios.delete(path);
+};
 
 const tasksApi = {
   fetch,
