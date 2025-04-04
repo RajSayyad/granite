@@ -41,3 +41,4 @@ en:
   task:
     slug:
       immutable: "Slug has already been taken and Slug is immutable!"
+    not_found: "Couldn't find Task"
