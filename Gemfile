@@ -61,6 +61,11 @@ gem "react-rails", "~> 2.7.1"
 
 gem "sidekiq", "<7"
 gem "simplecov", require: false, group: :test
+# For periodic sidekiq jobs
+gem "sidekiq-cron"
+
+# For opening mails in development env
+gem "letter_opener", group: :development
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

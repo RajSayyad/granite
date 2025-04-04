@@ -5,9 +5,15 @@ class User < ApplicationRecord
   MIN_PASSWORD_LENGTH = 6
   VALID_EMAIL_REGEX = /\A([\w+\-].?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i.freeze
   MAX_EMAIL_LENGTH = 255
-  has_many :comments, dependent: :destroy
-  has_many :created_tasks, foreign_key: :task_owner_id, class_name: "Task"
-  has_many :assigned_tasks, foreign_key: :assigned_user_id, class_name: "Task"
+  with_options class_name: "Task" do |user|
+    user.has_many :created_tasks, foreign_key: :task_owner_id
+    user.has_many :assigned_tasks, foreign_key: :assigned_user_id
+  end
+  with_options dependent: :destroy do |user|
+    user.has_many :comments
+    user.has_many :user_notifications, foreign_key: :user_id
+    user.has_one :preference, foreign_key: :user_id
+  end
   has_secure_token :authentication_token
   has_secure_password
 
@@ -21,11 +27,16 @@ class User < ApplicationRecord
 
   before_save :to_lowercase
   before_destroy :assign_tasks_to_task_owners
+  before_create :build_default_preference
 
   private
 
     def to_lowercase
       email.downcase!
+    end
+
+    def build_default_preference
+      self.build_preference(notification_delivery_hour: Constants::DEFAULT_NOTIFICATION_DELIVERY_HOUR)
     end
 
     def assign_tasks_to_task_owners
