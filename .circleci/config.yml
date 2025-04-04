@@ -43,9 +43,9 @@ jobs:
       # Setup database
       - run: cp config/database.yml.ci config/database.yml
       - run: bundle exec rails db:create db:schema:load --trace
-      # Generate assets
-      - run: chmod a+x ./bin/webpacker && ./bin/webpacker
-      - run: bundle exec rails webpacker:compile
+      # # Generate assets
+      # - run: chmod a+x ./bin/webpacker && ./bin/webpacker
+      # - run: bundle exec rails webpacker:compile
       # Unit tests
       - run:
           shell: /bin/bash
