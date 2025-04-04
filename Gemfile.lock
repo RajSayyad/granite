@@ -120,7 +120,6 @@ GEM
       reline (>= 0.3.8)
     docile (1.4.1)
     drb (2.2.1)
-    dry-cli (1.2.0)
     erubi (1.13.1)
     execjs (2.10.0)
     factory_bot (6.5.1)
@@ -215,8 +214,10 @@ GEM
       activesupport (>= 3.0.0)
     racc (1.8.1)
     rack (3.1.12)
-    rack-proxy (0.7.7)
-      rack
+    rack-protection (4.1.1)
+      base64 (>= 0.1.0)
+      logger (>= 1.6.0)
+      rack (>= 3.0.0, < 4)
     rack-session (2.1.0)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
@@ -263,6 +264,10 @@ GEM
       execjs
       railties (>= 3.2)
       tilt
+    redis (5.4.0)
+      redis-client (>= 0.22.0)
+    redis-client (0.24.0)
+      connection_pool
     regexp_parser (2.10.0)
     reline (0.6.0)
       io-console (~> 0.5)
@@ -291,6 +296,11 @@ GEM
       rubocop-ast (>= 1.38.0, < 2.0)
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
+    sidekiq (6.0.4)
+      connection_pool (>= 2.2.2)
+      rack (>= 2.0.0)
+      rack-protection (>= 2.0.0)
+      redis (>= 4.1.0)
     simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -324,15 +334,6 @@ GEM
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
-    vite_rails (3.0.19)
-      railties (>= 5.1, < 9)
-      vite_ruby (~> 3.0, >= 3.2.2)
-    vite_ruby (3.9.2)
-      dry-cli (>= 0.7, < 2)
-      logger (~> 1.6)
-      mutex_m
-      rack-proxy (~> 0.6, >= 0.6.1)
-      zeitwerk (~> 2.2)
     web-console (4.2.1)
       actionview (>= 6.0.0)
       activemodel (>= 6.0.0)
@@ -375,13 +376,13 @@ DEPENDENCIES
   responders
   rubocop
   rubocop-rails
+  sidekiq (< 7)
   simplecov
   sprockets-rails
   sqlite3 (~> 1.4)
   stimulus-rails
   turbo-rails
   tzinfo-data
-  vite_rails (~> 3.0)
   web-console
 
 RUBY VERSION
