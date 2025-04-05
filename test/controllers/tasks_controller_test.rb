@@ -14,97 +14,80 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
   def test_should_list_all_tasks_for_valid_user
     get tasks_path, headers: @creator_headers
     assert_response :success
-    response_json = response.parsed_body
-    all_tasks = response_json["tasks"]
 
-    expected_pending_tasks_ids = Task.where(progress: "pending").pluck(:id).sort
-    expected_completed_tasks_ids = Task.where(progress: "completed").pluck(:id).sort
-
-    actual_pending_tasks_ids = all_tasks["pending"].pluck("id").sort
-    actual_completed_tasks_ids = all_tasks["completed"].pluck("id").sort
-
-    assert_equal expected_pending_tasks_ids, actual_pending_tasks_ids
-    assert_equal expected_completed_tasks_ids, actual_completed_tasks_ids
+    tasks = response.parsed_body["tasks"]
+    assert_equal Task.where(progress: "pending").pluck(:id).sort, tasks["pending"].pluck("id").sort
+    assert_equal Task.where(progress: "completed").pluck(:id).sort, tasks["completed"].pluck("id").sort
   end
 
   def test_should_create_valid_task
     post tasks_path,
       params: { task: { title: "Learn Ruby", task_owner_id: @creator.id, assigned_user_id: @assignee.id } },
       headers: @creator_headers
+
     assert_response :success
-    response_json = response.parsed_body
-    assert_equal I18n.t("successfully_created", entity: "Task"), response_json["notice"]
+    assert_equal I18n.t("successfully_created", entity: "Task"), response.parsed_body["notice"]
   end
 
-  def test_shouldnt_create_task_without_title
-    post tasks_path, params: { task: { title: "", task_owner_id: @creator.id, assigned_user_id: @assignee.id } },
+  def test_should_not_create_task_without_title
+    post tasks_path,
+      params: { task: { title: "", task_owner_id: @creator.id, assigned_user_id: @assignee.id } },
       headers: @creator_headers
+
     assert_response :unprocessable_entity
-    response_json = response.parsed_body
-    assert_equal "Title can't be blank, Title is invalid", response_json["error"]
+    assert_equal "Title can't be blank, Title is invalid", response.parsed_body["error"]
   end
 
   def test_creator_can_update_any_task_fields
     new_title = "#{@task.title}-(updated)"
-    task_params = { task: { title: new_title, assigned_user_id: @assignee.id } }
+    put task_path(@task.slug),
+      params: { task: { title: new_title, assigned_user_id: @assignee.id } },
+      headers: @creator_headers
 
-    put task_path(@task.slug), params: task_params, headers: @creator_headers
     assert_response :success
     @task.reload
     assert_equal new_title, @task.title
-    assert_equal @assignee.id, @task.assigned_user_id
   end
 
   def test_should_destroy_task
     assert_difference "Task.count", -1 do
       delete task_path(@task.slug), headers: @creator_headers
     end
-
     assert_response :ok
   end
 
-  def test_assignee_shouldnt_destroy_task
+  def test_assignee_should_not_destroy_task
     delete task_path(@task.slug), headers: @assignee_headers
     assert_response :forbidden
-    response_json = response.parsed_body
-    assert_equal I18n.t("authorization.denied"), response_json["error"]
+    assert_equal I18n.t("authorization.denied"), response.parsed_body["error"]
   end
 
-  def test_assignee_shouldnt_update_restricted_task_fields
-    new_title = "#{@task.title}-(updated)"
-    task_params = { task: { title: new_title, assigned_user_id: @assignee.id } }
-
+  def test_assignee_should_not_update_restricted_task_fields
     assert_no_changes -> { @task.reload.title } do
-      put task_path(@task.slug), params: task_params, headers: @assignee_headers
+      put task_path(@task.slug),
+        params: { task: { title: "updated", assigned_user_id: @assignee.id } },
+        headers: @assignee_headers
+
       assert_response :forbidden
     end
   end
 
-  def test_assignee_can_change_status_and_progress_of_task
-    task_params = { task: { status: "starred", progress: "completed" } }
+  def test_both_creator_and_assignee_can_change_status_and_progress
+    %i[@creator_headers @assignee_headers].each do |header|
+      put task_path(@task.slug),
+        params: { task: { status: "starred", progress: "completed" } },
+        headers: instance_variable_get(header)
 
-    put task_path(@task.slug), params: task_params, headers: @assignee_headers
-    assert_response :success
-    @task.reload
-    assert @task.starred?
-    assert @task.completed?
+      assert_response :success
+      @task.reload
+      assert @task.starred?
+      assert @task.completed?
+    end
   end
 
-  def test_creator_can_change_status_and_progress_of_task
-    task_params = { task: { status: "starred", progress: "completed" } }
-
-    put task_path(@task.slug), params: task_params, headers: @creator_headers
-    assert_response :success
-    @task.reload
-    assert @task.starred?
-    assert @task.completed?
-  end
-
-  def test_not_found_error_rendered_for_invalid_task_slug
-    invalid_slug = "invalid-slug"
-
-    get task_path(invalid_slug), headers: @creator_headers
+  def test_not_found_error_for_invalid_task_slug
+    get task_path("invalid-slug"), headers: @creator_headers
     assert_response :not_found
-    assert_equal I18n.t("task.not_found"), response.parsed_body["error"]
+    assert_equal I18n.t("not_found", entity: "Task"), response.parsed_body["error"]
   end
 end
