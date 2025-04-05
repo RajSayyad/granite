@@ -6,7 +6,7 @@ if Rails.env.test?
 end
 
 Sidekiq.configure_server do |config|
-  config.redis = { url: Rails.application.secrets.redis_url, size: 9 }
+  config.redis = { url: Rails.application.secrets.redis_url }
   unless Rails.env.test? || Rails.env.production?
     schedule_file = "config/scheduled_jobs.yml"
 
@@ -17,5 +17,5 @@ Sidekiq.configure_server do |config|
 end
 
 Sidekiq.configure_client do |config|
-  config.redis = { url: Rails.application.secrets.redis_url, size: 1 }
+  config.redis = { url: Rails.application.secrets.redis_url }
 end
