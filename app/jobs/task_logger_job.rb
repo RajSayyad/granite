@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TaskLoggerJob
-  include Sidekiq::Job
+  include Sidekiq::Worker
 
   def perform(task_id)
     task = Task.find(task_id)
