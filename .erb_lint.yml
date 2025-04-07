@@ -1,3 +1,4 @@
 ---
 exclude:
   - "app/views/shared/_bundle.html.erb"
+  - 'vendor/**/*'

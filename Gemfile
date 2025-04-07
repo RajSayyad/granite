@@ -55,6 +55,11 @@ gem "responders"
 
 gem "react-rails", "~> 2.7.1"
 
+# PDF generation gem
+gem "wicked_pdf"
+# wicked_pdf uses the following binary
+gem "wkhtmltopdf-binary"
+
 gem "sidekiq", "<7"
 gem "simplecov", require: false, group: :test
 # For periodic sidekiq jobs
