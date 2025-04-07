@@ -18,13 +18,10 @@ FileUtils.chdir APP_ROOT do
   system!("yarn install")
 
   puts "\n== Precompiling assets =="
-  system!("bin/rails assets:precompile")
-
-  puts "\n== Setting up DB =="
-  system! "bundle exec rake db:setup"
+  system!("bundle exec rake assets:precompile")
 
   puts "\n== Migrating DB =="
-  system! "bundle exec rake db:migrate"
+  system!("bundle exec rake db:prepare")
 
   puts "\n== Restarting application server =="
   system! "bin/rails restart"
