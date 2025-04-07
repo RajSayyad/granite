@@ -17,11 +17,11 @@ FileUtils.chdir APP_ROOT do
   puts "\n== Executing yarn =="
   system!("yarn install")
 
-  puts "\n== Precompiling assets =="
-  system!("bundle exec rake assets:precompile")
+  puts "\n== Setting up DB =="
+  system! "bundle exec rake db:setup"
 
   puts "\n== Migrating DB =="
-  system!("bundle exec rake db:prepare")
+  system! "bundle exec rake db:migrate"
 
   puts "\n== Restarting application server =="
   system! "bin/rails restart"
