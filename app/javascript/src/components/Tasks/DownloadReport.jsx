@@ -1,59 +1,75 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import tasksApi from "apis/tasks";
-import { Container, PageTitle, Toastr } from "components/commons";
-import Logger from "js-logger";
+import createConsumer from "channels/consumer";
+import { subscribeToReportDownloadChannel } from "channels/reportDownloadChannel";
+import { Button, Container, ProgressBar, PageTitle } from "components/commons";
+import FileSaver from "file-saver";
 
 const DownloadReport = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [message, setMessage] = useState("");
+
+  const consumer = createConsumer();
 
   const generatePdf = async () => {
     try {
       await tasksApi.generatePdf();
     } catch (error) {
-      Logger.error(error);
+      logger.error(error);
     }
   };
 
-  const saveAs = ({ blob, fileName }) => {
-    const objectUrl = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = objectUrl;
-    link.setAttribute("download", fileName);
-    document.body.appendChild(link);
-    link.click();
-    link.parentNode.removeChild(link);
-    setTimeout(() => window.URL.revokeObjectURL(objectUrl), 150);
-  };
-
   const downloadPdf = async () => {
+    setIsLoading(true);
     try {
-      Toastr.success("Downloading report...");
       const { data } = await tasksApi.download();
-      saveAs({ blob: data, fileName: "granite_task_report.pdf" });
+      FileSaver.saveAs(data, "granite_task_report.pdf");
     } catch (error) {
-      Logger.error(error);
+      logger.error(error);
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    generatePdf();
-    setTimeout(() => {
-      downloadPdf();
-    }, 5000);
+    subscribeToReportDownloadChannel({
+      consumer,
+      setMessage,
+      setProgress,
+      generatePdf,
+    });
+
+    return () => {
+      consumer.disconnect();
+    };
   }, []);
 
-  const message = isLoading
-    ? "Report is being generated..."
-    : "Report downloaded!";
+  useEffect(() => {
+    if (progress === 100) {
+      setIsLoading(false);
+      setMessage("Report is ready to be downloaded");
+    }
+  }, [progress]);
 
   return (
     <Container>
       <div className="flex flex-col gap-y-8">
         <PageTitle title="Download report" />
-        <h1>{message}</h1>
+        <div className="mb-4 w-full">
+          <div className="mx-auto mb-4 w-full overflow-hidden rounded-lg border border-gray-200 bg-white text-gray-800 sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-2xl">
+            <div className="space-y-2 p-6">
+              <p className="text-xl font-semibold">{message}</p>
+              <ProgressBar progress={progress} />
+            </div>
+          </div>
+          <Button
+            buttonText="Download"
+            loading={isLoading}
+            onClick={downloadPdf}
+          />
+        </div>
       </div>
     </Container>
   );

@@ -14,6 +14,7 @@ class User < ApplicationRecord
     user.has_many :user_notifications, foreign_key: :user_id
     user.has_one :preference, foreign_key: :user_id
   end
+  has_one_attached :report
   has_secure_token :authentication_token
   has_secure_password
 
