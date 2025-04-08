@@ -17,8 +17,8 @@ FileUtils.chdir APP_ROOT do
   puts "\n== Executing yarn =="
   system!("yarn install")
 
-  puts "\n== Setting up DB =="
-  system! "bundle exec rake db:setup"
+  # puts "\n== Setting up DB =="
+  # system! "bundle exec rake db:setup"
 
   puts "\n== Restarting application server =="
   system! "bin/rails restart"
