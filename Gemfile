@@ -69,7 +69,7 @@ gem "sidekiq-cron"
 gem "google-cloud-storage"
 
 # To load the environment variables
-gem "dotenv-rails"
+gem "dotenv-rails", "~> 2.7"
 
 # For opening mails in development env
 gem "letter_opener", group: :development
